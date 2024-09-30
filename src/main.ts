@@ -6,6 +6,7 @@ import {EEmailActions} from "./enums/email-actions.enum";
 import {FirstFormType} from "./types/first-form.type";
 import {email} from "./constants/emails";
 import {SecondFormType} from "./types/second-form.type";
+import {ApiError} from "./errors/api.error";
 
 const app = express();
 
@@ -24,9 +25,9 @@ app.post('/users/first_form', async (req: Request, res: Response): Promise<void>
             phoneNumber,
             comment: commentField
         });
-        res.send('Дякую! Ми вам зателефонуємо.');
+        res.send('Дякую! Ми Вам перетелефонуємо.');
     } catch (e) {
-        console.log(e);
+        throw new ApiError('Error sending message!', 400);
     }
 });
 
@@ -34,10 +35,18 @@ app.post('/users/second_form', async (req: Request, res: Response): Promise<void
     const {name, phoneNumber, date} = req.body as SecondFormType;
     try {
         await emailService.sendMail(email, EEmailActions.WELCOME, {name, phoneNumber, date});
-        res.send('Дякую! Ми вам зателефонуємо.');
+        res.send('Дякую! Ми Вам перетелефонуємо.');
     } catch (e) {
-        console.log(e);
+        throw new ApiError('Error sending message!', 400);
     }
+});
+
+app.use("*", (err: ApiError, req: Request, res: Response) => {
+    const status = err.status || 500;
+    res.json({
+        message: err.message,
+        status: status,
+    });
 });
 
 app.listen(PORT, () => {

@@ -1,7 +1,12 @@
 import nodemailer from 'nodemailer';
 import {configs} from "../configs/configs";
+// import * as path from "node:path";
+// import hbs from "nodemailer-express-handlebars";
+import {EEmailActions} from "../enums/email-actions.enum";
+// import {emailTemplates} from "../constants/email.constants";
 
 const transporter = nodemailer.createTransport({
+    from: "No reply",
     service: 'gmail',
     auth: {
         user: configs.SMTP_USER,
@@ -9,8 +14,22 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// const hbsOptions = {
+//     viewEngine: {
+//         extname: '.hbs',
+//         layoutsDir: path.join(__dirname, 'email-templates', 'layouts'),
+//         defaultLayout: 'main', // Основний шаблон
+//         partialsDir: path.join(__dirname, 'email-templates', 'partials'),
+//     },
+//     viewPath: path.join(__dirname, 'email-templates', 'views'), // Шлях до шаблонів
+//     extName: '.hbs',
+// };
+//
+// // Інтеграція шаблонів з Nodemailer
+// transporter.use('compile', hbs(hbsOptions));
+
 export const emailService = {
-    sendMail: async (to: string, action: string, context: {
+    sendMail: async (to: string, emailAction: EEmailActions, context: {
         name: string,
         phoneNumber: string,
         comment?: string,
@@ -31,72 +50,22 @@ export const emailService = {
             text
         };
 
-        return transporter.sendMail(mailOptions);
+        // const {templateName, subject} = emailTemplates[emailAction];
+        // const mailOptions = {
+        //     to,
+        //     subject,
+        //     template: templateName,
+        //     context,
+        //     text
+        // };
+
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email відправлено:', info.response);
+        } catch (error) {
+            console.error('Помилка при відправці email:', error);
+        }
+
+        // return await transporter.sendMail(mailOptions);
     }
 };
-
-
-// import nodemailer, {Transporter} from "nodemailer";
-// import hbs from "nodemailer-express-handlebars";
-// import * as path from "path";
-//
-// import {configs} from "../configs/configs";
-// import {emailTemplates} from "../constants/email.constants";
-// import {EEmailActions} from "../enums/email-actions.enum";
-//
-// class EmailService {
-//     private transporter: Transporter;
-//
-//     constructor() {
-//         this.transporter = nodemailer.createTransport({
-//             from: "No reply",
-//             service: "gmail",
-//             auth: {
-//                 user: configs.SMTP_USER,
-//                 pass: configs.SMTP_PASS,
-//             },
-//         });
-//
-//         const hbsOptions = {
-//             viewEngine: {
-//                 extname: ".hbs",
-//                 defaultLayout: "main",
-//                 layoutsDir: path.join(
-//                     process.cwd(),
-//                     "src",
-//                     "email-templates",
-//                     "layouts"
-//                 ),
-//                 partialsDir: path.join(
-//                     process.cwd(),
-//                     "src",
-//                     "email-templates",
-//                     "partials"
-//                 ),
-//             },
-//             viewPath: path.join(process.cwd(), "src", "email-templates", "views"),
-//             extName: ".hbs",
-//         };
-//
-//         this.transporter.use("compile", hbs(hbsOptions));
-//     }
-//
-//     public async sendMail(
-//         email: string,
-//         emailAction: EEmailActions,
-//         context: Record<string, string | number> = {}
-//     ) {
-//         const {templateName, subject} = emailTemplates[emailAction];
-//         context.frontUrl = configs.FRONT_URL;
-//         const mailOptions = {
-//             to: email,
-//             subject,
-//             template: templateName,
-//             context,
-//         };
-//
-//         return await this.transporter.sendMail(mailOptions);
-//     }
-// }
-//
-// export const emailService = new EmailService();
