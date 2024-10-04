@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "rimraf dist && tsc-watch --onSuccess 'npm run watch:server'",
-    "watch:server": "nodemon 'src/main.ts' --watch './src'"
+    "start": "node ./dist/index.js",
+    "start:dev": "rimraf dist && tsc-watch --onSuccess 'npm run watch:server'",
+    "watch:server": "nodemon 'src/index.ts' --watch './src'",
+    "build": "tsc",
+    "build:watch": "tsc --watch"
   },
   "keywords": [],
   "author": "",
@@ -15,8 +18,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "nodemailer": "^6.9.15",
-    "nodemailer-express-handlebars": "^7.0.0",
-    "typescript": "^5.6.2"
+    "nodemailer-express-handlebars": "^7.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -26,6 +28,7 @@
     "nodemon": "^3.1.7",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
-    "tsc-watch": "^6.2.0"
+    "tsc-watch": "^6.2.0",
+    "typescript": "^5.6.2"
   }
 }
