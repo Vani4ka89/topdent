@@ -7,7 +7,8 @@ import {FirstFormType} from "./types/first-form.type";
 import {email} from "./constants/emails";
 import {SecondFormType} from "./types/second-form.type";
 import {ApiError} from "./errors/api.error";
-import * as path from "node:path";
+// import * as path from "node:path";
+// import * as process from "node:process";
 
 const app = express();
 
@@ -17,11 +18,11 @@ app.use(cors({origin: true}))
 
 const PORT = configs.PORT;
 
-app.use(express.static('public_html'));
-
-app.get('*', (req: Request, res: Response) => {
-    res.sendFile(path.resolve(__dirname, 'public_html', 'index.html'));
-});
+// app.use(express.static('public'));
+//
+// app.get('*', (req: Request, res: Response) => {
+//     res.sendFile(path.resolve(process.cwd(), 'public', 'index.html'));
+// });
 
 app.post('/users/first_form', async (req: Request, res: Response): Promise<void> => {
     const {name, phoneNumber, comment} = req.body as FirstFormType;
@@ -55,6 +56,8 @@ app.use("*", (err: ApiError, req: Request, res: Response) => {
         status: status,
     });
 });
+
+// app.listen(process.env.PORT, process.env.HOST || '');
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
